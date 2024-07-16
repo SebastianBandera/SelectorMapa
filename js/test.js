@@ -62,15 +62,37 @@ var marker = L.marker([-34.893299, -56.165160],
 .addTo(map);
 
 var mClick = null;
+var mClick_lat = null;
+var mClick_lng = null;
+var tooltip;
+var tooltip_params;
 
 map.on("click", function(e) {
     if(mClick!=null) {
         map.removeLayer(mClick)
     }
-    
-    mClick = new L.marker([e.latlng.lat,e.latlng.lng]).bindTooltip("lat:" + e.latlng.lat + "<br>lng:" + e.latlng.lng, {
+
+    mClick_lat=e.latlng.lat;
+    mClick_lng=e.latlng.lng;
+
+    tooltip = ()=>"lat:" + mClick_lat + "<br>lng:" + mClick_lng;
+    tooltip_params = {
         direction: "right",
         sticky: true,
         offset: [10, 0]
-    }).addTo(map)
+    };
+    
+    mClick = new L.marker([mClick_lat,mClick_lng], {draggable:true}).bindTooltip(tooltip, tooltip_params).addTo(map);
+
+    mClick.on('dragstart', function(e){
+        mClick.unbindTooltip();
+    });
+
+    mClick.on('dragend', function(e){
+        mClick_lat=e.target._latlng.lat;
+        mClick_lng=e.target._latlng.lng;
+        var marker = e.target;
+        map.panTo([mClick_lat,mClick_lng]);
+        mClick.bindTooltip(tooltip, tooltip_params);
+      });
 });
