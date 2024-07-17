@@ -88,11 +88,20 @@ map.on("click", function(e) {
         mClick.unbindTooltip();
     });
 
-    mClick.on('dragend', function(e){
+    mClick.on('drag', function(e){
+        //mClick.unbindTooltip();
         mClick_lat=e.target._latlng.lat;
         mClick_lng=e.target._latlng.lng;
+        //mClick.unbindTooltip();
+        //mClick.bindTooltip(tooltip, tooltip_params);
+    });
+
+    mClick.on('dragend', function(e){
+        let latlng = e.target.getLatLng();
+        mClick_lat=latlng.lat;
+        mClick_lng=latlng.lng;
         var marker = e.target;
         map.panTo([mClick_lat,mClick_lng]);
         mClick.bindTooltip(tooltip, tooltip_params);
-      });
+    });
 });
