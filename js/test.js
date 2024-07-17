@@ -116,7 +116,20 @@ map.on("click", function(e) {
 document.querySelector("#calle_y_numero").addEventListener('keyup', function (e) {
     if (e.key === 'Enter' || e.keyCode === 13) {
         imap.searchResolve((data) => {
-            let coords = data[0].geojson.coordinates;
+            let coords;
+            if(data == null || data.length==0) {
+                if(mClick!=null) {
+                    map.removeLayer(mClick)
+                }
+                document.querySelector("#msg").innerText = "Punto no encontrado";
+                return;
+            } else if (data.length>1) {
+                let obj = data.filter(d=>d.importance!=null && d.addresstype!=null && (d.addresstype == 'place' || d.addresstype == 'road')).sort(d=>d.importance).reverse()[0]; 
+                coords = [obj.lon, obj.lat];
+            } else {
+                coords = data[0].geojson.coordinates;
+            }
+            
             if(mClick!=null) {
                 map.removeLayer(mClick)
             }
@@ -156,6 +169,7 @@ document.querySelector("#calle_y_numero").addEventListener('keyup', function (e)
                 mClick.bindTooltip(tooltip, tooltip_params);
                 console.log(latlng);
             });
+            document.querySelector("#msg").innerText = "Punto encontrado";
         }, document.querySelector("#calle_y_numero").value, "UY", "jsonv2");
     }
 });
