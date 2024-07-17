@@ -32,7 +32,10 @@ class NominatimImpl {
     //log? -> ?json:text -|>catch log?
     _commonResolve(funcCB, promise, resolveToJson) {
         promise.then(data=>this._logIn(data, console.debug))
-               .then(d=>d.bodyUsed ? d : (!!resolveToJson) ? d.json() : this._getText(d))
+               .then(d=>{
+                    let i = 21;
+                    return d.bodyUsed ? d : (!!resolveToJson) ? d.json() : this._getText(d)
+                })
                .then(funcCB)
                .catch(data=>this._logIn(data, console.error));
     }

@@ -1,4 +1,4 @@
-const imap = new NominatimImpl("http://localhost:8080/");
+const imap = new NominatimImpl("https://nominatim.openstreetmap.org/");
 imap.setLog(true);
 
 /*imap.statusResolve((data) => {
@@ -111,4 +111,51 @@ map.on("click", function(e) {
         mClick.bindTooltip(tooltip, tooltip_params);
         console.log(latlng);
     });
+});
+
+document.querySelector("#calle_y_numero").addEventListener('keyup', function (e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        imap.searchResolve((data) => {
+            let coords = data[0].geojson.coordinates;
+            if(mClick!=null) {
+                map.removeLayer(mClick)
+            }
+        
+            mClick_lat=coords[1];
+            mClick_lng=coords[0];
+        
+            map.panTo([mClick_lat,mClick_lng]);
+
+            tooltip = ()=>"lat:" + mClick_lat + "<br>lng:" + mClick_lng;
+            tooltip_params = {
+                direction: "right",
+                sticky: true,
+                offset: [10, 0]
+            };
+            
+            mClick = new L.marker([mClick_lat,mClick_lng], {draggable:true}).bindTooltip(tooltip, tooltip_params).addTo(map);
+        
+            mClick.on('dragstart', function(e){
+                mClick.unbindTooltip();
+            });
+        
+            mClick.on('drag', function(e){
+                //mClick.unbindTooltip();
+                mClick_lat=e.target._latlng.lat;
+                mClick_lng=e.target._latlng.lng;
+                //mClick.unbindTooltip();
+                //mClick.bindTooltip(tooltip, tooltip_params);
+            });
+        
+            mClick.on('dragend', function(e){
+                let latlng = e.target.getLatLng();
+                mClick_lat=latlng.lat;
+                mClick_lng=latlng.lng;
+                var marker = e.target;
+                map.panTo([mClick_lat,mClick_lng]);
+                mClick.bindTooltip(tooltip, tooltip_params);
+                console.log(latlng);
+            });
+        }, document.querySelector("#calle_y_numero").value, "UY", "jsonv2");
+    }
 });
