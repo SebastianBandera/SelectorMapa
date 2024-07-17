@@ -22,6 +22,12 @@ imap.reverseResolve((data) => {
 }, -34.8931833, -56.170223, 20, 1, "jsonv2");
 */
 
+imap.resolveReverseCalcDistance((data)=> {
+    if(data.custom_evaluated_distance>1) {
+        console.log("Distancia mayor a 1Km !!! -> " + data.custom_evaluated_distance)
+    }
+}, -34.92816383449365, -56.11610412597657, 20, 1, "jsonv2");
+
 //console.log(imap.cross("MONTEVIDEO, juan paullier", "UY", "jsonv2", "MONTEVIDEO, goes", "UY", "jsonv2"));
 
 //console.log(imap.cross("MONTEVIDEO, juan paullier", "UY", "jsonv2", "MONTEVIDEO, artigas", "UY", "jsonv2"));
@@ -103,5 +109,6 @@ map.on("click", function(e) {
         var marker = e.target;
         map.panTo([mClick_lat,mClick_lng]);
         mClick.bindTooltip(tooltip, tooltip_params);
+        console.log(latlng);
     });
 });

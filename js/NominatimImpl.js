@@ -32,7 +32,7 @@ class NominatimImpl {
     //log? -> ?json:text -|>catch log?
     _commonResolve(funcCB, promise, resolveToJson) {
         promise.then(data=>this._logIn(data, console.debug))
-               .then(d=>(!!resolveToJson) ? d.json() : this._getText(d))
+               .then(d=>d.bodyUsed ? d : (!!resolveToJson) ? d.json() : this._getText(d))
                .then(funcCB)
                .catch(data=>this._logIn(data, console.error));
     }
@@ -85,13 +85,24 @@ class NominatimImpl {
             lon: lon,
             zoom: zoom,
             addressdetails: addressdetails,
-            format: format
+            format: format,
+            polygon_geojson: 1
         };
         return this._commonRequest("reverse", params);
     }
 
     reverseResolve(funcCB, lat, lon, zoom, addressdetails, format) {
         this._commonResolve(funcCB, imap.reverse(lat, lon, zoom, addressdetails, format), true);
+    }
+
+    resolveReverseCalcDistance(funcCB, lat, lon, zoom, addressdetails, format) {
+        this.reverse(lat, lon, zoom, addressdetails, format)
+            .then(d=>d.json())
+            .then(j=>{
+                j.custom_evaluated_distance = this._getMeters(lon, lat, j.geojson.coordinates[0], j.geojson.coordinates[1]);
+                return j;
+            })
+            .then(funcCB)
     }
 
     _getLinePoints(data) {
