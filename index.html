@@ -5,40 +5,86 @@
     <title>Selector Mapa</title>
     <script defer src="./js/NominatimImpl.js"></script>
     <script defer src="./js/leaflet/leaflet.js"></script>
-    <script defer src="./js/test.js"></script>
+    <script defer src="./js/MapController.js"></script>
+    <script defer src="./js/TestMapController.js"></script>
+    <!--<script defer src="./js/test.js"></script>-->
     <link rel="stylesheet" href="./js/leaflet/leaflet.css" />
     <link rel="stylesheet" href="./css/main.css" />
 </head>
 <body>
 
-    Message
-    <div id="msg">
+    <div class="form_dir">
+        <p class="form-required">Los campos indicados con * son obligatorios</p>
+        <fieldset>
+            <legend>Datos de domicilio</legend>
+            <ul class="form-group-list">
+                <li>
+                    <label for="departamento">Departamento:<span class="required">*</span></label>
+                    <select id="departamento" name="departamento">
+                        <option selected="">Seleccione un departamento</option>
+                        <option>Montevideo</option>
+                        <option>Artigas</option>
+                        <option>Canelones</option>
+                        <option>Cerro Largo</option>
+                        <option>Colonia</option>
+                        <option>Durazno</option>
+                        <option>Flores</option>
+                        <option>Florida</option>
+                        <option>Lavalleja</option>
+                        <option>Maldonado</option>
+                        <option>Paysandú</option>
+                        <option>Rio Negro</option>
+                        <option>Rivera</option>
+                        <option>Rocha</option>
+                        <option>Salto</option>
+                        <option>San José</option>
+                        <option>Soriano</option>
+                        <option>Tacuarembó</option>
+                        <option>Treinta y Tres</option>
+                    </select>
+                </li>
+                <li>
+                    <label for="calle">Calle:<span class="required">*</span></label>
+                    <input id="calle" name="calle" type="text" value="">
+                    <span class="input-msg">Ejemplo: 18 de Julio o Ruta 8</span>
+                </li>
+                <li>
+                    <label for="numero">Número:<span class="required">*</span></label>
+                    <input id="numero" name="numero" type="text" value="" class="campo-sm">
+                    <span class="input-msg">Ejemplo: 1242 o Km. 80</span>
+                </li>
+                <li>
+                    <label for="esquina">Esquina:</label>
+                    <input id="esquina" name="esquina" type="text" value="">
+                </li>
+                <li>
+                    <label for="domicilio">Otros datos:</label>
+                    <input id="domicilio" name="domicilio" type="text" value="">
+                    <span class="input-msg">Apto, bloque, etc.</span>
+                </li>
+                <div id="map"></div>
+                <fieldset>
+                    Campos a ocultar
+                    <li>
+                        <label for="status">Estado:</label>
+                        <input id="status" name="status" type="text" value="">
+                    </li>
+                    <li>
+                        <label for="coords">Coordenadas:</label>
+                        <input id="coords" name="coords" type="text" value="">
+                    </li>
+                    <li>
+                        <label for="coords_lat">Latitud:</label>
+                        <input id="coords_lat" name="coords_lat" type="text" value="">
+                    </li>
+                    <li>
+                        <label for="coords_lon">Longitud:</label>
+                        <input id="coords_lon" name="coords_lon" type="text" value="">
+                    </li>
+                </fieldset>
+            </ul>
+        </fieldset>
+    </div>
     
-    </div>
-
-    <div>
-        Estado:
-        <input id="status"></input>
-    </div>
-
-    <div>
-        Departamento:
-        <input id="depto"></input>
-    </div>
-
-    <div>
-        Calle y número:
-        <input id="calle_y_numero"></input>
-    </div>
-
-    <div>
-        Cruce (esquina):
-        Calle:
-        <input id="calle"></input>
-        Calle:
-        <input id="calle_esq"></input>
-    </div>
-    
-    <div id="map"></div>
 </body>
 </html> 

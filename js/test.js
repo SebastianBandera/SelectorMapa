@@ -40,7 +40,7 @@ imap.crossResolve(console.log, "MONTEVIDEO, juan paullier", "UY", "jsonv2", "MON
 
 var map = L.map('map').setView([-34.893299, -56.165160], 13);
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?bar', {
+L.tileLayer('http://127.0.0.1:6789/openstreetmap-carto/tile/{z}/{x}/{y}.png', {
     minZoom: 3,
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -113,7 +113,7 @@ map.on("click", function(e) {
     });
 });
 
-document.querySelector("#calle_y_numero").addEventListener('keyup', function (e) {
+/*document.querySelector("#calle_y_numero").addEventListener('keyup', function (e) {
     if (e.key === 'Enter' || e.keyCode === 13) {
         imap.searchResolve((data) => {
             let coords;
@@ -172,4 +172,4 @@ document.querySelector("#calle_y_numero").addEventListener('keyup', function (e)
             document.querySelector("#msg").innerText = "Punto encontrado";
         }, document.querySelector("#calle_y_numero").value, "UY", "jsonv2");
     }
-});
+});*/

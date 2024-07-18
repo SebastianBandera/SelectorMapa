@@ -2,3 +2,132 @@
     width: 700px;
     height: 380px;
 }
+
+.form_dir {
+    width: 800px;
+}
+
+.form_dir {
+    color: #000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+    font-size: 1em;
+    font-weight: normal;
+    line-height: 1.5;
+}
+
+.form_dir .form-required {
+    margin-bottom: -5px;
+    text-align: right;
+    font-size: 0.9em;
+}
+
+.form_dir legend {
+    padding: 0 15px;
+    font-size: 1.25em;
+    line-height: 1;
+    border: 0;
+    box-sizing: border-box;
+    color: inherit;
+    display: table;
+    max-width: 100%;
+    white-space: normal;
+}
+
+.form_dir fieldset ul.form-group-list, .form_dir  ul.data-list {
+    padding-left: 55px;
+}
+
+.form_dir  ul.form-group-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.form_dir *, .form_dir *:before, .form_dir *:after {
+    box-sizing: inherit;
+}
+
+.form_dir .form-group, .form_dir ul.form-group-list > li {
+    margin-bottom: 7px;
+}
+.form_dir .form-group, .form_dir ul.form-group-list > li {
+    position: relative;
+    padding: 10px 15px;
+}
+.form_dir ul.form-group-list li {
+    display: block;
+    margin-bottom: 0;
+}
+.form_dir .form-group *, .form_dir ul.form-group-list * {
+    vertical-align: middle;
+}
+
+
+.form_dir ul.form-group-list label, .form_dir ul.form-group-list .label {
+    vertical-align: middle;
+}
+
+.form_dir .form-group *, .form_dir ul.form-group-list * {
+    vertical-align: middle;
+}
+.form_dir fieldset label, .form_dir fieldset span.label {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    width: 20%;
+    text-align: right;
+    margin-right: 10px;
+    line-height: 1.2em;
+}
+
+
+.form_dir .form-group *, .form_dir ul.form-group-list * {
+    vertical-align: middle;
+}
+
+.form_dir input[type="text"], .form_dir input[type="email"], .form_dir input[type="password"], .form_dir input[type="tel"], .form_dir input[type="date"], .form_dir select {
+    padding: 5px 10px;
+    line-height: 1.5;
+    border: 1px solid #bebebe;
+    width: 50%;
+    min-width: 295px;
+    border-radius: 2px;
+}
+.form_dir input, .form_dir button, .form_dir select, .form_dir textarea {
+    font-family: inherit;
+    font-size: inherit;
+    box-sizing: border-box;
+}
+.form_dir button, .form_dir select {
+    text-transform: none;
+}
+
+.form_dir span.required, .form_dir .form-required span {
+    color: #3D6789;
+}
+
+
+.form_dir input[type="text"], .form_dir input[type="email"], .form_dir input[type="password"], .form_dir input[type="tel"], .form_dir input[type="date"], .form_dir select {
+    padding: 5px 10px;
+    line-height: 1.5;
+    border: 1px solid #bebebe;
+    width: 50%;
+    min-width: 295px;
+    border-radius: 2px;
+}
+
+.form_dir input, .form_dir button, .form_dir select, .form_dir textarea {
+    font-family: inherit;
+    font-size: inherit;
+    box-sizing: border-box;
+}
+.form_dir button, .form_dir input {
+    overflow: visible;
+}
+
+.form_dir .input-msg {
+    display: block;
+    margin-top: 5px;
+    --margin-left: 235px;
+    margin-left: 23%;
+    font-size: 0.9em;
+}
