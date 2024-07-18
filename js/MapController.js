@@ -61,6 +61,11 @@ class MapController {
         this._objs.status.setValue(this._getStatus());
 
         this._getMap().on("click", this._eventMapClick.bind(this));
+
+        this._objs.calle.getObj().addEventListener("keyup", this._eventGeodecode.bind(this));
+        this._objs.calle_numero.getObj().addEventListener("keyup", this._eventGeodecode.bind(this));
+
+        //this._objs.calle_esquina.on("keyup", this._eventGeodecode.bind(this));
     }
 
     _getStatus() {
@@ -76,13 +81,24 @@ class MapController {
     }
 
     _eventMapClick(e) {
-        if(this._house_marker!=null) {
-            this._getMap().removeLayer(this._house_marker)
-        }
-    
         this._coord_lat=e.latlng.lat;
         this._coord_lng=e.latlng.lng;
     
+        this._setMarker();
+
+        this._reverseGeodecode();
+        this._updateCoords();
+    }
+
+    _removeMarker() {
+        if(this._house_marker!=null) {
+            this._getMap().removeLayer(this._house_marker)
+        }
+    }
+
+    _setMarker() {
+        this._removeMarker();
+
         let tooltip = ()=>"latitud:" + this._coord_lat + "<br>longitud:" + this._coord_lng;
         let tooltip_params = {
             direction: "right",
@@ -90,7 +106,11 @@ class MapController {
             offset: [10, 0]
         };
         
-        this._house_marker = new L.marker([this._coord_lat,this._coord_lng], {draggable:true}).bindTooltip(tooltip, tooltip_params).addTo(this._getMap());
+        this._house_marker = new L.marker([this._coord_lat,this._coord_lng], {
+            draggable: true,
+            title: "Marcador en el mapa",
+            icon: this._house_icon
+        }).bindTooltip(tooltip, tooltip_params).addTo(this._getMap());
     
         this._getMap().panTo([this._coord_lat,this._coord_lng]);
 
@@ -113,9 +133,6 @@ class MapController {
             this._reverseGeodecode();
             this._updateCoords();
         });
-
-        this._reverseGeodecode();
-        this._updateCoords();
     }
 
     _updateCoords() {
@@ -143,6 +160,29 @@ class MapController {
         }, this._coord_lat, this._coord_lng, zoom, addressdetails, format);
     }
 
+    _eventGeodecode(e) {
+        if(e.code == 'Tab' || e.code == 'Enter') {
+            let calle = this._objs.calle.getValue();
+            let numero = this._objs.calle_numero.getValue();
+            if(calle && numero) {
+                const countryCode = "UY";
+                const format = "jsonv2";
+                this._getNominatim().searchResolve((data) => {
+                    let coords = data[0].geojson.coordinates;
+
+                    this._coord_lat=coords[1];
+                    this._coord_lng=coords[0];
+
+                    this._setMarker();
+                    
+                    this._getMap().setView(L.latLng(this._coord_lat, this._coord_lng), 15);
+
+                    this._updateCoords();
+                }, calle + " " + numero, countryCode, format);
+            }
+        }
+    }
+
 }
 
 class InputWrapper {
@@ -163,5 +203,9 @@ class InputWrapper {
 
     getValue() {
         return this._obj == null ? '' : this._obj.value;
+    }
+
+    getObj() {
+        return this._obj;
     }
 }

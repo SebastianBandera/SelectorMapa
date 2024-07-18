@@ -65,7 +65,7 @@ class NominatimImpl {
     }
 
     statusResolve(funcCB) {
-        this._commonResolve(funcCB, imap.status(), false);
+        this._commonResolve(funcCB, this.status(), false);
     }
 
     search(query, countrycodes, format) {
@@ -79,7 +79,7 @@ class NominatimImpl {
     }
 
     searchResolve(funcCB, query, countrycodes, format) {
-        this._commonResolve(funcCB, imap.search(query, countrycodes, format), true);
+        this._commonResolve(funcCB, this.search(query, countrycodes, format), true);
     }
 
     reverse(lat, lon, zoom, addressdetails, format) {
@@ -95,7 +95,7 @@ class NominatimImpl {
     }
 
     reverseResolve(funcCB, lat, lon, zoom, addressdetails, format) {
-        this._commonResolve(funcCB, imap.reverse(lat, lon, zoom, addressdetails, format), true);
+        this._commonResolve(funcCB, this.reverse(lat, lon, zoom, addressdetails, format), true);
     }
 
     resolveReverseCalcDistance(funcCB, lat, lon, zoom, addressdetails, format) {
@@ -212,6 +212,6 @@ class NominatimImpl {
     }
 
     crossResolve(funcCB, query1, countrycodes1, format1, query2, countrycodes2, format2) {
-        this._commonResolve(funcCB, imap.cross(query1, countrycodes1, format1, query2, countrycodes2, format2), false);
+        this._commonResolve(funcCB, this.cross(query1, countrycodes1, format1, query2, countrycodes2, format2), false);
     }
 }
