@@ -8,8 +8,8 @@ class MapController {
     _house_icon = L.icon({
         iconUrl: 'js/leaflet/images/exterior.png',
         iconSize: [35, 35],
-        iconAnchor: null,
-        popupAnchor: null
+        //iconAnchor: null,
+        //popupAnchor: null
     });
     _status_new = 'nuevo';
     _status_edit = 'edicion';
