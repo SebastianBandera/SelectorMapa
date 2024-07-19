@@ -1,3 +1,9 @@
+const centro_tipo = {
+    2: 'Escuela',
+    3: 'Liceo',
+    4: 'UTU'
+}
+
 const centros = {
     "data": [
         {
