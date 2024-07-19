@@ -1,10 +1,10 @@
 class MapController {
-    //Variables cargadas al inicio
+    //Vars
     _objs;
     _url_nominatim;
     _url_tiles;
 
-    //Constantes
+    //Constants
     _house_icon = L.icon({
         iconUrl: 'js/leaflet/images/exterior.png',
         iconSize: [35, 35]
@@ -24,7 +24,7 @@ class MapController {
     _status_new = 'nuevo';
     _status_edit = 'edicion';
 
-    //Estado
+    //Status
     _status = [];
     _house_marker;
     _coord_lat;
@@ -165,15 +165,17 @@ class MapController {
             this._house_marker.bindTooltip(tooltip, tooltip_params);
             this._reverseGeodecode();
             this._updateCoords();
+            
+            this._updateVisibleCenters();
         });
 
-        this._updateCentrosVisibles();
+        this._updateVisibleCenters();
     }
 
     centros = [];
     circle = null;
     
-    _updateCentrosVisibles() {
+    _updateVisibleCenters() {
         const list = centros.data;
 
         const tooltip_params = {
