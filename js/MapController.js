@@ -211,10 +211,20 @@ class MapController {
             }
         }
 
-        const count = 5;
+        let count = 5;
 
         centro_dist = centro_dist.sort((c1,c2)=>c1.distance-c2.distance);
-        
+
+        for (let index = count-1; index < centro_dist.length-1; index++) {
+            const item = centro_dist[index];
+            const next_item = centro_dist[index+1];
+            if(item.distance==next_item.distance) {
+                count++;
+            } else {
+                break;
+            }
+        }
+
         for (let index = 0; index < count; index++) {
             const centro_obj = centro_dist[index];
 
