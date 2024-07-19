@@ -7,7 +7,8 @@ let mapController = new MapController({
     id_status: 'status',
     id_coords: 'coords',
     id_coords_lat: 'coords_lat',
-    id_coords_lng: 'coords_lon'
+    id_coords_lng: 'coords_lon',
+    id_toggle_todos_centros: 'toggle_todos_centros'
 },
 'https://nominatim.openstreetmap.org/',
 'https://tile.openstreetmap.org/',
