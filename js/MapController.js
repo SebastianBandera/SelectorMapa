@@ -5,6 +5,7 @@ class MapController {
     _url_tiles;
 
     //Constants
+    threshold = 20.000;
     _house_icon = L.icon({
         iconUrl: 'js/leaflet/images/exterior.png',
         iconSize: [35, 35]
@@ -30,11 +31,8 @@ class MapController {
     _coord_lat;
     _coord_lng;
 
-    _selecionarIcono(consejo) {
-        if(consejo==2) return this._center_escuela_icon;
-        if(consejo==3) return this._center_liceo_icon;
-        if(consejo==4) return this._center_utu_icon;
-    }
+    _centers = [];
+    _circle = null;
 
     constructor(obj_ids, url_nominatim, url_tiles) {
         this._objs = {
@@ -113,6 +111,13 @@ class MapController {
         return this._objs.nominatim;
     }
 
+    _selecionarIcono(consejo) {
+        if(consejo==2) return this._center_escuela_icon;
+        if(consejo==3) return this._center_liceo_icon;
+        if(consejo==4) return this._center_utu_icon;
+        return null;
+    }
+
     _eventMapClick(e) {
         this._coord_lat=e.latlng.lat;
         this._coord_lng=e.latlng.lng;
@@ -171,9 +176,6 @@ class MapController {
 
         this._updateVisibleCenters();
     }
-
-    centros = [];
-    circle = null;
     
     _updateVisibleCenters() {
         const list = centros.data;
@@ -183,21 +185,19 @@ class MapController {
             sticky: true,
             offset: [10, 0]
         };
-        
-        const threshold = 20.000;
 
-        for (const c of this.centros) {
+        for (const c of this._centers) {
             this._getMap().removeLayer(c)
         }
-        if(this.circle) {
-            this._getMap().removeLayer(this.circle);
+        if(this._circle) {
+            this._getMap().removeLayer(this._circle);
         }
 
         let centro_dist = [];
 
         for (const c of list) {
             const distance = this._getNominatim().calculateDistance(c.Long_dec,c.Lat_dec,this._coord_lng,this._coord_lat);
-            if(distance<threshold){
+            if(distance<this.threshold){
                 centro_dist.push({
                     centro: c,
                     distance: distance
@@ -214,30 +214,40 @@ class MapController {
         const count = 5;
 
         centro_dist = centro_dist.sort((c1,c2)=>c1.distance-c2.distance);
-
+        
         for (let index = 0; index < count; index++) {
             const centro_obj = centro_dist[index];
 
             let marker;
             if(index>0 && centro_obj.distance == centro_dist[index-1].distance) {
-                const tooltip = centro_obj.centro.consejo_id + ": " + centro_obj.centro.nombre + " <br> " + centro_dist[index-1].centro.consejo_id + ": " + centro_dist[index-1].centro.nombre;
-                this._getMap().removeLayer(this.centros[this.centros.length-1]);
+                this._getMap().removeLayer(this._centers[this._centers.length-1]);
+                const tooltipSingleGenerator = (id, name)=>centro_tipo[id] + ": " + name;
+                let tooltipList = [];
+                for (let inner_index = index; inner_index>=0; inner_index--) {
+                    const center = centro_dist[inner_index];
+                    if(center.distance == centro_obj.distance) {
+                        tooltipList.push(tooltipSingleGenerator(center.centro.consejo_id, center.centro.nombre));
+                    } else {
+                        break;
+                    }
+                } 
+                const tooltip = tooltipList.join(" <br> ");
                 marker = new L.marker([centro_obj.centro.Lat_dec,centro_obj.centro.Long_dec], {
                     title: "Centros " + centro_obj.centro.nombre + " y " + centro_dist[index-1].centro.nombre,
                     icon: this._selecionarIcono(centro_obj.centro.consejo_id),
                 }).bindTooltip(tooltip, tooltip_params).addTo(this._getMap());
             } else {
-                const tooltip = centro_obj.centro.consejo_id + ": " + centro_obj.centro.nombre;
+                const tooltip = centro_tipo[centro_obj.centro.consejo_id] + ": " + centro_obj.centro.nombre;
                 marker = new L.marker([centro_obj.centro.Lat_dec,centro_obj.centro.Long_dec], {
                     title: "Centro " + centro_obj.centro.nombre,
                     icon: this._selecionarIcono(centro_obj.centro.consejo_id),
                 }).bindTooltip(tooltip, tooltip_params).addTo(this._getMap());
             }
             
-            this.centros.push(marker);
+            this._centers.push(marker);
         }
 
-        this.circle = L.circle([this._coord_lat, this._coord_lng], centro_dist[count-1].distance*1000+50).addTo(this._getMap());
+        this._circle = L.circle([this._coord_lat, this._coord_lng], centro_dist[count-1].distance*1000+50).addTo(this._getMap());
     }
 
     _updateCoords() {
