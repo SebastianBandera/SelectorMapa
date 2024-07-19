@@ -10,16 +10,16 @@ class MapController {
         iconSize: [35, 35]
     });
     _center_liceo_icon = L.icon({
-        iconUrl: 'js/leaflet/images/liceo.png',
-        iconSize: [20, 20]
+        iconUrl: 'js/leaflet/images/liceo3.png',
+        iconSize: [25, 25]
     });
     _center_escuela_icon = L.icon({
-        iconUrl: 'js/leaflet/images/escuela.png',
-        iconSize: [20, 20]
+        iconUrl: 'js/leaflet/images/escuela3.png',
+        iconSize: [25, 25]
     });
     _center_utu_icon = L.icon({
-        iconUrl: 'js/leaflet/images/utu.png',
-        iconSize: [20, 20]
+        iconUrl: 'js/leaflet/images/utu3.png',
+        iconSize: [25, 25]
     });
     _status_new = 'nuevo';
     _status_edit = 'edicion';
@@ -170,20 +170,6 @@ class MapController {
         this._updateCentrosVisibles();
     }
 
-    _getDistance(lon1,lat1,lon2,lat2) {
-        lat1 = this._radiansFunc(lat1);
-        lon1 = this._radiansFunc(lon1);
-        lat2 = this._radiansFunc(lat2);
-        lon2 = this._radiansFunc(lon2);
-        
-        const radio = 6371;
-        let difLon = (lon2 - lon1);
-        let difLat = (lat2 - lat1);
-        let a = Math.pow(Math.sin(difLat / 2.0), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(difLon / 2.0), 2);
-        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return radio * c;
-    }
-
     centros = [];
     circle = null;
     
@@ -208,7 +194,7 @@ class MapController {
         let centro_dist = [];
 
         for (const c of list) {
-            const distance = this._getDistance(c.Long_dec,c.Lat_dec,this._coord_lng,this._coord_lat);
+            const distance = this._getNominatim().calculateDistance(c.Long_dec,c.Lat_dec,this._coord_lng,this._coord_lat);
             if(distance<threshold){
                 centro_dist.push({
                     centro: c,
@@ -249,10 +235,6 @@ class MapController {
         }
 
         this.circle = L.circle([this._coord_lat, this._coord_lng], centro_dist[count-1].distance*1000+50).addTo(this._getMap());
-    }
-
-    _radiansFunc(val) {
-        return val*Math.PI/180;
     }
 
     _updateCoords() {

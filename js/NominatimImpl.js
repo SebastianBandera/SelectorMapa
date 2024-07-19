@@ -102,7 +102,7 @@ class NominatimImpl {
         this.reverse(lat, lon, zoom, addressdetails, format)
             .then(d=>d.json())
             .then(j=>{
-                j.custom_evaluated_distance = this._getMeters(lon, lat, j.geojson.coordinates[0], j.geojson.coordinates[1]);
+                j.custom_evaluated_distance = this.calculateDistance(lon, lat, j.geojson.coordinates[0], j.geojson.coordinates[1]);
                 return j;
             })
             .then(funcCB)
@@ -116,7 +116,7 @@ class NominatimImpl {
             let point = points[index];
             extendedPoints.push(point);
             const next_point = points[index + 1];
-            let len = this._getMeters(point[0], point[1], next_point[0], next_point[1]);
+            let len = this.calculateDistance(point[0], point[1], next_point[0], next_point[1]);
             if(len >= min_threshold) {
                 const count_new_points = Math.floor(len / min_threshold);
                 for (let index_new_points = 1; index_new_points <= count_new_points; index_new_points++) {
@@ -140,7 +140,7 @@ class NominatimImpl {
         return val*Math.PI/180;
     }
 
-    _getMeters(lon1,lat1,lon2,lat2) {
+    calculateDistance(lon1,lat1,lon2,lat2) {
         lat1 = this._radiansFunc(lat1);
         lon1 = this._radiansFunc(lon1);
         lat2 = this._radiansFunc(lat2);
@@ -170,7 +170,7 @@ class NominatimImpl {
             for (const index_point2 in line2) {
                 const point1 = line1[index_point1];
                 const point2 = line2[index_point2];
-                const len = this._getMeters(point1[0], point1[1], point2[0], point2[1]);
+                const len = this.calculateDistance(point1[0], point1[1], point2[0], point2[1]);
                 if(len < minLen) {
                     minLen = len;
                     finalPoint1 = point1;
