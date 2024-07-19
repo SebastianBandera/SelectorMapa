@@ -14,3 +14,6 @@ let mapController = new MapController({
 );
 
 mapController.startControl();
+
+//mapController.setMarkers(centros.data);
+

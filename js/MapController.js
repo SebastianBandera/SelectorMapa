@@ -7,9 +7,19 @@ class MapController {
     //Constantes
     _house_icon = L.icon({
         iconUrl: 'js/leaflet/images/exterior.png',
-        iconSize: [35, 35],
-        //iconAnchor: null,
-        //popupAnchor: null
+        iconSize: [35, 35]
+    });
+    _center_liceo_icon = L.icon({
+        iconUrl: 'js/leaflet/images/liceo.png',
+        iconSize: [20, 20]
+    });
+    _center_escuela_icon = L.icon({
+        iconUrl: 'js/leaflet/images/escuela.png',
+        iconSize: [20, 20]
+    });
+    _center_utu_icon = L.icon({
+        iconUrl: 'js/leaflet/images/utu.png',
+        iconSize: [20, 20]
     });
     _status_new = 'nuevo';
     _status_edit = 'edicion';
@@ -19,6 +29,12 @@ class MapController {
     _house_marker;
     _coord_lat;
     _coord_lng;
+
+    _selecionarIcono(consejo) {
+        if(consejo==2) return this._center_escuela_icon;
+        if(consejo==3) return this._center_liceo_icon;
+        if(consejo==4) return this._center_utu_icon;
+    }
 
     constructor(obj_ids, url_nominatim, url_tiles) {
         this._objs = {
@@ -66,6 +82,23 @@ class MapController {
         this._objs.calle_numero.getObj().addEventListener("keyup", this._eventGeodecode.bind(this));
 
         //this._objs.calle_esquina.on("keyup", this._eventGeodecode.bind(this));
+    }
+
+    setMarkers(list) {
+        const tooltip_params = {
+            direction: "right",
+            sticky: true,
+            offset: [10, 0]
+        };
+        
+        for (const c of list) {
+            const tooltip = c.consejo_id + ": " + c.nombre;
+            new L.marker([c.Lat_dec,c.Long_dec], {
+                title: "Centro " + c.nombre,
+                icon: this._center_icon,
+
+            }).bindTooltip(tooltip, tooltip_params).addTo(this._getMap());
+        }
     }
 
     _getStatus() {
@@ -133,6 +166,93 @@ class MapController {
             this._reverseGeodecode();
             this._updateCoords();
         });
+
+        this._updateCentrosVisibles();
+    }
+
+    _getDistance(lon1,lat1,lon2,lat2) {
+        lat1 = this._radiansFunc(lat1);
+        lon1 = this._radiansFunc(lon1);
+        lat2 = this._radiansFunc(lat2);
+        lon2 = this._radiansFunc(lon2);
+        
+        const radio = 6371;
+        let difLon = (lon2 - lon1);
+        let difLat = (lat2 - lat1);
+        let a = Math.pow(Math.sin(difLat / 2.0), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(difLon / 2.0), 2);
+        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return radio * c;
+    }
+
+    centros = [];
+    circle = null;
+    
+    _updateCentrosVisibles() {
+        const list = centros.data;
+
+        const tooltip_params = {
+            direction: "right",
+            sticky: true,
+            offset: [10, 0]
+        };
+        
+        const threshold = 20.000;
+
+        for (const c of this.centros) {
+            this._getMap().removeLayer(c)
+        }
+        if(this.circle) {
+            this._getMap().removeLayer(this.circle);
+        }
+
+        let centro_dist = [];
+
+        for (const c of list) {
+            const distance = this._getDistance(c.Long_dec,c.Lat_dec,this._coord_lng,this._coord_lat);
+            if(distance<threshold){
+                centro_dist.push({
+                    centro: c,
+                    distance: distance
+                });
+
+                /*const tooltip = c.consejo_id + ": " + c.nombre;
+                const marker = new L.marker([c.Lat_dec,c.Long_dec], {
+                    title: "Centro " + c.nombre,
+                    icon: this._selecionarIcono(c.consejo_id),
+                }).bindTooltip(tooltip, tooltip_params).addTo(this._getMap());*/
+            }
+        }
+
+        const count=5;
+
+        centro_dist = centro_dist.sort((c1,c2)=>c1.distance-c2.distance);
+
+        for (let index = 0; index < count; index++) {
+            const centro_obj = centro_dist[index];
+
+            let marker;
+            if(index>0 && centro_obj.distance == centro_dist[index-1].distance) {
+                const tooltip = centro_obj.centro.consejo_id + ": " + centro_obj.centro.nombre + " <br> " + centro_dist[index-1].centro.consejo_id + ": " + centro_dist[index-1].centro.nombre;
+                marker = new L.marker([centro_obj.centro.Lat_dec,centro_obj.centro.Long_dec], {
+                    title: "Centros " + centro_obj.centro.nombre + " y " + centro_dist[index-1].centro.nombre,
+                    icon: this._selecionarIcono(centro_obj.centro.consejo_id),
+                }).bindTooltip(tooltip, tooltip_params).addTo(this._getMap());
+            } else {
+                const tooltip = centro_obj.centro.consejo_id + ": " + centro_obj.centro.nombre;
+                marker = new L.marker([centro_obj.centro.Lat_dec,centro_obj.centro.Long_dec], {
+                    title: "Centro " + centro_obj.centro.nombre,
+                    icon: this._selecionarIcono(centro_obj.centro.consejo_id),
+                }).bindTooltip(tooltip, tooltip_params).addTo(this._getMap());
+            }
+            
+            this.centros.push(marker);
+        }
+
+        this.circle = L.circle([this._coord_lat, this._coord_lng], centro_dist[count-1].distance*1000+50).addTo(this._getMap());
+    }
+
+    _radiansFunc(val) {
+        return val*Math.PI/180;
     }
 
     _updateCoords() {
@@ -152,7 +272,7 @@ class MapController {
             } else {
                 this._objs.calle.setValue(data.address.road);
                 let houseNumber = data.address.house_number;
-                if(houseNumber.indexOf(",")>=0) {
+                if(houseNumber!=null && houseNumber.indexOf(",")>=0) {
                     houseNumber = houseNumber.split(",")[0];
                 }
                 this._objs.calle_numero.setValue(houseNumber);
