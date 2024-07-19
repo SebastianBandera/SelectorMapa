@@ -227,7 +227,7 @@ class MapController {
             }
         }
 
-        for (let index = 0; index < count; index++) {
+        for (let index = 0; index < count && index < centro_dist.length; index++) {
             const centro_obj = centro_dist[index];
 
             let marker;
@@ -259,7 +259,7 @@ class MapController {
             this._centers.push(marker);
         }
 
-        this._circle = L.circle([this._coord_lat, this._coord_lng], centro_dist[count-1].distance*1000+50).addTo(this._getMap());
+        this._circle = L.circle([this._coord_lat, this._coord_lng], centro_dist[count>=centro_dist.length ? centro_dist.length-1 : count-1].distance*1000+50).addTo(this._getMap());
     }
 
     _updateCoords() {
