@@ -245,13 +245,13 @@ class MapController {
                 } 
                 const tooltip = tooltipList.join(" <br> ");
                 marker = new L.marker([centro_obj.centro.Lat_dec,centro_obj.centro.Long_dec], {
-                    title: "Centros " + centro_obj.centro.nombre + " y " + centro_dist[index-1].centro.nombre,
+                    title: tooltip.replaceAll("<br> ","\n"),
                     icon: this._selecionarIcono(centro_obj.centro.consejo_id),
                 }).bindTooltip(tooltip, tooltip_params).addTo(this._getMap());
             } else {
                 const tooltip = centro_tipo[centro_obj.centro.consejo_id] + ": " + centro_obj.centro.nombre;
                 marker = new L.marker([centro_obj.centro.Lat_dec,centro_obj.centro.Long_dec], {
-                    title: "Centro " + centro_obj.centro.nombre,
+                    title: tooltip,
                     icon: this._selecionarIcono(centro_obj.centro.consejo_id),
                 }).bindTooltip(tooltip, tooltip_params).addTo(this._getMap());
             }
