@@ -165,7 +165,7 @@ class MapController {
             this._house_marker.bindTooltip(tooltip, tooltip_params);
             this._reverseGeodecode();
             this._updateCoords();
-            
+
             this._updateVisibleCenters();
         });
 
@@ -211,7 +211,7 @@ class MapController {
             }
         }
 
-        const count=5;
+        const count = 5;
 
         centro_dist = centro_dist.sort((c1,c2)=>c1.distance-c2.distance);
 
@@ -221,6 +221,7 @@ class MapController {
             let marker;
             if(index>0 && centro_obj.distance == centro_dist[index-1].distance) {
                 const tooltip = centro_obj.centro.consejo_id + ": " + centro_obj.centro.nombre + " <br> " + centro_dist[index-1].centro.consejo_id + ": " + centro_dist[index-1].centro.nombre;
+                this._getMap().removeLayer(this.centros[this.centros.length-1]);
                 marker = new L.marker([centro_obj.centro.Lat_dec,centro_obj.centro.Long_dec], {
                     title: "Centros " + centro_obj.centro.nombre + " y " + centro_dist[index-1].centro.nombre,
                     icon: this._selecionarIcono(centro_obj.centro.consejo_id),
