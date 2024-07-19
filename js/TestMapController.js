@@ -10,7 +10,8 @@ let mapController = new MapController({
     id_coords_lng: 'coords_lon'
 },
 'https://nominatim.openstreetmap.org/',
-'https://tile.openstreetmap.org/'
+'https://tile.openstreetmap.org/',
+centros.data
 );
 
 mapController.startControl();

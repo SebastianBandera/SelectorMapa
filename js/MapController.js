@@ -1,8 +1,9 @@
 class MapController {
-    //Vars
+    //Vars constructor
     _objs;
     _url_nominatim;
     _url_tiles;
+    _centers_list;
 
     //Constants
     threshold = 20.000;
@@ -34,7 +35,7 @@ class MapController {
     _centers = [];
     _circle = null;
 
-    constructor(obj_ids, url_nominatim, url_tiles) {
+    constructor(obj_ids, url_nominatim, url_tiles, centers_list) {
         this._objs = {
             depto: new InputWrapper(obj_ids.id_depto),
             calle: new InputWrapper(obj_ids.id_calle),
@@ -51,6 +52,7 @@ class MapController {
         this._url_tiles = url_tiles;
         this._url_nominatim = this._url_nominatim.endsWith("/") ? this._url_nominatim : this._url_nominatim + '/';
         this._url_tiles = this._url_tiles.endsWith("/") ? this._url_tiles : this._url_tiles + '/';
+        this._centers_list = centers_list
 
         //Leaflet
         this._objs.map = L.map(this._objs.map_id).setView([-34.893299, -56.165160], 13);
@@ -178,7 +180,7 @@ class MapController {
     }
     
     _updateVisibleCenters() {
-        const list = centros.data;
+        const list = this._centers_list;
 
         const tooltip_params = {
             direction: "right",
