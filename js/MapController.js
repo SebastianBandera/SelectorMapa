@@ -12,15 +12,15 @@ class MapController {
         iconSize: [35, 35]
     });
     _center_liceo_icon = L.icon({
-        iconUrl: 'js/leaflet/images/liceo3.png',
+        iconUrl: 'js/leaflet/images/liceo4.png',
         iconSize: [25, 25]
     });
     _center_escuela_icon = L.icon({
-        iconUrl: 'js/leaflet/images/escuela3.png',
+        iconUrl: 'js/leaflet/images/escuela4.png',
         iconSize: [25, 25]
     });
     _center_utu_icon = L.icon({
-        iconUrl: 'js/leaflet/images/utu3.png',
+        iconUrl: 'js/leaflet/images/utu4.png',
         iconSize: [25, 25]
     });
     _status_new = 'nuevo';
