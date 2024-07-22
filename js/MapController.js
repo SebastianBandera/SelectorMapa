@@ -174,6 +174,8 @@ class MapController {
             this._coord_lat=latlng.lat;
             this._coord_lng=latlng.lng;
         });
+
+        
     
         this._house_marker.on('dragend', e=>{
             let latlng = e.target.getLatLng();
@@ -334,7 +336,16 @@ class MapController {
                 const countryCode = "UY";
                 const format = "jsonv2";
                 this._getNominatim().searchResolve((data) => {
-                    let coords = data[0].geojson.coordinates;
+                    // let coords = data[0].geojson.coordinates;
+
+                    console.log("length " + data[0].geojson.coordinates.length);
+                    let coords = data[0].geojson.coordinates[0];
+                    if (data[0].geojson.coordinates.length == 2){
+                        coords = data[0].geojson.coordinates;
+                    }
+
+                    console.log("data");
+                    console.log(data);
 
                     this._coord_lat=coords[1];
                     this._coord_lng=coords[0];
@@ -342,11 +353,14 @@ class MapController {
                     this._setMarker();
                     
                     this._getMap().setView(L.latLng(this._coord_lat, this._coord_lng), 15);
-
+                   
                     this._updateCoords();
                 }, calle + " " + numero, countryCode, format);
             }
         }
+
+
+        
     }
 
 }
