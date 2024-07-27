@@ -194,3 +194,37 @@ div.switch .slider.round {
 div.switch .slider.round:before {
     border-radius: 50%;
 }
+
+
+
+ /* Estilos para el overlay */
+ .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;;
+    z-index: 10;
+}
+
+.overlay > div {
+    margin-top: 100px;
+}
+
+.hidden {
+    display: none;
+}
+
+.form_dir {
+    position: relative;
+}
+
+
+.spinner_loading {
+    display: flex;
+    justify-content: center;
+}

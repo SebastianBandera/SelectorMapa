@@ -11,6 +11,7 @@
     <!--<script defer src="./js/test.js"></script>-->
     <link rel="stylesheet" href="./js/leaflet/leaflet.css" />
     <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/spinner_loading.css" />
 </head>
 <body>
 
@@ -71,7 +72,7 @@
                         <span class="slider round"></span>
                     </div>
                 </li>
-                <fieldset>
+                <fieldset disabled="true">
                     Campos a ocultar
                     <li>
                         <label for="status">Estado:</label>
@@ -92,6 +93,27 @@
                 </fieldset>
             </ul>
         </fieldset>
+        <div id="overlay" class="overlay hidden">
+            <div>
+                <p class="msg"></p>
+                <div class="spinner_loading">
+                    <!--
+                        Source: https://labs.danielcardoso.net/load-awesome/animations.html
+                        x: @DanielCardoso
+                    -->
+                    <div class="la-ball-spin-clockwise" alt="Loading">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
 </body>

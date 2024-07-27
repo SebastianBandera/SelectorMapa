@@ -1,0 +1,8 @@
+La función _unlock
+
+Previene bloqueo infinito por algun error, pero solo desbloquea si la semilla es correcta para evitar el siguiente caso:
+1. Se abre el overlay y se inicia el setTimeout para el unlock en 30 segundos
+2. Finaliza correctamente y se cierra el overlay en 20 segundos
+3. Inicia otra búsqueda y se abre el overlay, además de otro unlock
+4. Si demora 20 segundos, el primer unlock cerrará el overlay al llegar a los 30 segundos, pero en realidad ese unlock ya no debería ser valido porque quizás es una espera legítima de la segunda instancia de búsqueda. Entonces el mecanismo con la semilla permite que sólo el unlock más reciente sea válido, porque antes del unlock se debería llamar un Math.random() para generar una nueva.
+

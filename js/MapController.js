@@ -47,7 +47,8 @@ class MapController {
             coords: new InputWrapper(obj_ids.id_coords),
             coords_lat: new InputWrapper(obj_ids.id_coords_lat),
             coords_lng: new InputWrapper(obj_ids.id_coords_lng),
-            toggle_todos_centros_id: obj_ids.id_toggle_todos_centros
+            toggle_todos_centros_id: obj_ids.id_toggle_todos_centros,
+            overlay: new OverlayController(obj_ids.id_overlay)
         };
         this._url_nominatim = url_nominatim;
         this._url_tiles = url_tiles;
@@ -132,6 +133,8 @@ class MapController {
     }
 
     _eventMapClick(e) {
+        this._openOverlay("Buscando ubicación...");
+
         this._coord_lat=e.latlng.lat;
         this._coord_lng=e.latlng.lng;
     
@@ -310,6 +313,19 @@ class MapController {
         this._objs.status.setValue(this._getStatus());
     }
 
+    _openOverlay(msg) {
+        setTimeout(()=>{
+            if(msg!=null)this._objs.overlay.setMessage(msg);
+            this._objs.overlay.show();
+        },0);
+    }
+
+    _closeOverlay() {
+        setTimeout(()=>{
+            this._objs.overlay.hide();
+        },0);
+    }
+
     _reverseGeodecode() {
         const addressdetails = 1;
         const zoom = 20;
@@ -333,11 +349,15 @@ class MapController {
                     this._objs.calle_numero.setValue("");
                 }
             }
+            
+            this._closeOverlay();
         }, this._coord_lat, this._coord_lng, zoom, addressdetails, format);
     }
 
     _eventGeodecode(e) {
         if(e.code == 'Tab' || e.code == 'Enter') {
+            this._openOverlay("Buscando ubicación...");
+            
             let calle = this._objs.calle.getValue();
             let numero = this._objs.calle_numero.getValue();
             if(calle && numero) {
@@ -363,12 +383,11 @@ class MapController {
                     this._getMap().setView(L.latLng(this._coord_lat, this._coord_lng), 15);
                    
                     this._updateCoords();
+
+                    this._closeOverlay();
                 }, calle + " " + numero, countryCode, format);
             }
         }
-
-
-        
     }
 
 }
@@ -397,3 +416,63 @@ class InputWrapper {
         return this._obj;
     }
 }
+
+class OverlayController {
+    _obj;
+    _seed = Math.random();
+
+    constructor(id) {
+        this._obj = document.getElementById(id);
+    }
+
+    exists() {
+        return this._obj!=null;
+    }
+
+    isHidden() {
+        if(!this.exists())return false;
+        
+        return this._obj.classList.contains("hidden");
+    }
+
+    show() {
+        if(!this.exists())return;
+
+        if(this.isHidden()){
+            this._obj.classList.remove("hidden");
+            this._seed=Math.random();
+            setTimeout(this._unlock(this._seed).bind(this),30000);
+        }
+    }
+
+    _unlock(seed) {
+        return ()=>{
+            if(!this.isHidden() && seed==this._seed) {
+                this._obj.classList.add("hidden");
+                console.warn("Desbloqueo por timeout!!");
+            }
+        }
+    }
+
+    hide() {
+        if(!this.exists())return;
+
+        if(!this.isHidden()){
+            this._obj.classList.add("hidden");
+        }
+    }
+
+    setMessage(text) {
+        if(!this.exists())return;
+
+        let list = this._obj.getElementsByClassName("msg");
+
+        if(list!=null){
+            for (let index = 0; index < list.length; index++) {
+                const element = list[index];
+                element.innerText = text;
+            }
+        }
+    }
+}
+
