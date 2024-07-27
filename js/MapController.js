@@ -318,12 +318,20 @@ class MapController {
             if(data.custom_evaluated_distance>0.5) {
                 console.log("Distancia mayor a 1Km !!! -> " + data.custom_evaluated_distance)
             } else {
-                this._objs.calle.setValue(data.address.road);
+                if(data.address.road) {
+                    this._objs.calle.setValue(data.address.road);
+                } else {
+                    this._objs.calle.setValue("");
+                }
                 let houseNumber = data.address.house_number;
                 if(houseNumber!=null && houseNumber.indexOf(",")>=0) {
                     houseNumber = houseNumber.split(",")[0];
                 }
-                this._objs.calle_numero.setValue(houseNumber);
+                if(houseNumber!=null) {
+                    this._objs.calle_numero.setValue(houseNumber);
+                } else {
+                    this._objs.calle_numero.setValue("");
+                }
             }
         }, this._coord_lat, this._coord_lng, zoom, addressdetails, format);
     }
