@@ -25,6 +25,9 @@ class MapController {
     });
     _status_new = 'nuevo';
     _status_edit = 'edicion';
+    
+    countryCode = "UY";
+    format = "jsonv2";
 
     //Status
     _status = [];
@@ -324,7 +327,6 @@ class MapController {
     _reverseGeodecode() {
         const addressdetails = 1;
         const zoom = 20;
-        const format = "jsonv2";
         this._getNominatim().resolveReverseCalcDistance((data)=> {
             if(data.custom_evaluated_distance>0.5) {
                 console.log("Distancia mayor a 1Km !!! -> " + data.custom_evaluated_distance)
@@ -338,7 +340,7 @@ class MapController {
             }
             
             this._closeOverlay();
-        }, this._coord_lat, this._coord_lng, zoom, addressdetails, format);
+        }, this._coord_lat, this._coord_lng, zoom, addressdetails, this.format);
     }
 
     _noNull(data) {
@@ -347,40 +349,116 @@ class MapController {
 
     _eventGeodecode(e) {
         if(e.code == 'Tab' || e.code == 'Enter') {
-            this._openOverlay("Buscando ubicación...");
-            
             let calle = this._objs.calle.getValue();
             let numero = this._objs.calle_numero.getValue();
+            let depto = this._objs.depto.getValue();
             if(calle && numero) {
-                const countryCode = "UY";
-                const format = "jsonv2";
-                this._getNominatim().searchResolve((data) => {
-                    // let coords = data[0].geojson.coordinates;
-
-                    console.log("length " + data[0].geojson.coordinates.length);
-                    let coords = data[0].geojson.coordinates[0];
-                    if (data[0].geojson.coordinates.length == 2){
-                        coords = data[0].geojson.coordinates;
-                    }
-
-                    console.log("data");
-                    console.log(data);
-
-                    this._coord_lat=coords[1];
-                    this._coord_lng=coords[0];
-
-                    this._setMarker();
-                    
-                    this._getMap().setView(L.latLng(this._coord_lat, this._coord_lng), 15);
-                   
-                    this._updateCoords();
-
-                    this._closeOverlay();
-                }, calle + " " + numero, countryCode, format);
+                this._openOverlay("Buscando ubicación...");
+                this._getNominatim().searchResolve(this._eventResultGeodecode(depto, calle, numero).bind(this), calle + " " + numero, this.countryCode, this.format);
             }
         }
     }
 
+    _eventResultGeodecode(depto, calle, numero) {
+        return (data)=>{
+            const threshold = 10;
+
+            const dataFiltered = this._filterData(data, depto);
+
+            if(dataFiltered.length > 0) {
+                let coords = dataFiltered[0].geojson.coordinates[0];
+                if (dataFiltered[0].geojson.coordinates.length == 2){
+                    coords = dataFiltered[0].geojson.coordinates;
+                }
+    
+                this._coord_lat=coords[1];
+                this._coord_lng=coords[0];
+    
+                this._setMarker();
+    
+                this._getMap().setView(L.latLng(this._coord_lat, this._coord_lng), 15);
+    
+                this._updateCoords();
+
+                this._closeOverlay();
+            } else {
+                numero = numero.trim()
+                if(this._isNumber(numero)) {
+                    numero = Number(numero);
+                    const promisesObj = [];
+                    for (let index = numero - threshold; index < numero + threshold; index++) {
+                        const var_numero = index;
+                        promisesObj.push({
+                            num: var_numero,
+                            promise: this._getNominatim().search(calle + " " + var_numero,this.countryCode, this.format).then(data=>data.json())
+                        })
+                    }
+                    Promise.all(promisesObj.map(item=>item.promise)).then(data=>{
+                        //the order is preserved.
+                        for (let index = 0; index < data.length; index++) {
+                            const element = data[index];
+                            promisesObj[index]["data"]=element;
+                        }
+
+                        for (let index = 0; index < promisesObj.length; index++) {
+                            const element = promisesObj[index];
+                            const dataElementFiltered = this._filterData(element.data, depto);
+                            element["correct"]=dataElementFiltered.length;
+                        }
+                        
+                        let nearestObj = this._nearestCoors(numero, promisesObj.filter(item=>item.correct));
+
+                        if(nearestObj && nearestObj.length>0) {
+                            let coords=nearestObj[0].geojson.coordinates;
+                            this._coord_lat=coords[1];
+                            this._coord_lng=coords[0];
+                
+                            this._setMarker();
+                
+                            this._getMap().setView(L.latLng(this._coord_lat, this._coord_lng), 15);
+                
+                            this._updateCoords();
+                        } else {
+                            //No encontrado !!!
+                        }
+                        this._closeOverlay();
+                    });
+                } else {
+                    //No encontrado !!!
+                    this._closeOverlay();
+                }
+            }
+        }
+    }
+
+    _isNumber(data) {
+        return !isNaN(data)
+    }
+
+    _filterData(data, depto) {
+        if(data==null)return null;
+
+        //Clone
+        data = JSON.parse(JSON.stringify(data));
+
+        if(depto!=null && depto.trim()!='') {
+            data = data.filter(item => item && item.address && item.address.state && item.address.state==depto);
+        }
+
+        data = data.filter(item => item && item.geojson && item.geojson.type=="Point" && item.geojson.coordinates && item.geojson.coordinates.length > 0);
+
+        data = data.sort((c1,c2)=>c1.importance-c2.importance).reverse();
+
+        return data;
+    }
+
+    _nearestCoors(numero, array) {
+        array.forEach(element => {
+            element["diff"]=Math.abs(element.num-numero);    
+        });
+        array.sort((c1,c2)=>c1.diff-c2.diff);
+        return array[0].data;
+    }
 }
 
 class InputWrapper {
