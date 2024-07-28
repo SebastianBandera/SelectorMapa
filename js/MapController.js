@@ -48,7 +48,8 @@ class MapController {
             coords_lat: new InputWrapper(obj_ids.id_coords_lat),
             coords_lng: new InputWrapper(obj_ids.id_coords_lng),
             toggle_todos_centros_id: obj_ids.id_toggle_todos_centros,
-            overlay: new OverlayController(obj_ids.id_overlay)
+            overlay: new OverlayController(obj_ids.id_overlay),
+            dir_mapa: new InputWrapper(obj_ids.id_dir_mapa)
         };
         this._url_nominatim = url_nominatim;
         this._url_tiles = url_tiles;
@@ -333,25 +334,19 @@ class MapController {
         this._getNominatim().resolveReverseCalcDistance((data)=> {
             if(data.custom_evaluated_distance>0.5) {
                 console.log("Distancia mayor a 1Km !!! -> " + data.custom_evaluated_distance)
+                this._objs.dir_mapa.setValue("");
+                this._objs.dir_mapa.getObj().classList.add("hidden");
             } else {
-                if(data.address.road) {
-                    this._objs.calle.setValue(data.address.road);
-                } else {
-                    this._objs.calle.setValue("");
-                }
-                let houseNumber = data.address.house_number;
-                if(houseNumber!=null && houseNumber.indexOf(",")>=0) {
-                    houseNumber = houseNumber.split(",")[0];
-                }
-                if(houseNumber!=null) {
-                    this._objs.calle_numero.setValue(houseNumber);
-                } else {
-                    this._objs.calle_numero.setValue("");
-                }
+                this._objs.dir_mapa.setValue(this._noNull(data.address.road) + " " + this._noNull(data.address.house_number));
+                this._objs.dir_mapa.getObj().classList.remove("hidden");
             }
             
             this._closeOverlay();
         }, this._coord_lat, this._coord_lng, zoom, addressdetails, format);
+    }
+
+    _noNull(data) {
+        return data ? data : "";
     }
 
     _eventGeodecode(e) {

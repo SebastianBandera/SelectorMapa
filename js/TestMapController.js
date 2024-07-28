@@ -9,7 +9,8 @@ let mapController = new MapController({
     id_coords_lat: 'coords_lat',
     id_coords_lng: 'coords_lon',
     id_toggle_todos_centros: 'toggle_todos_centros',
-    id_overlay: 'overlay'
+    id_overlay: 'overlay',
+    id_dir_mapa: 'dir_mapa'
 },
 'https://nominatim.openstreetmap.org/',
 'https://tile.openstreetmap.org/',
@@ -27,7 +28,8 @@ centros.data
     id_coords_lat: 'coords_lat',
     id_coords_lng: 'coords_lon',
     id_toggle_todos_centros: 'toggle_todos_centros',
-    id_overlay: 'overlay'
+    id_overlay: 'overlay',
+    id_dir_mapa: 'dir_mapa'
 },
 'http://localhost:8080/',
 'http://localhost:8081/tile',
@@ -35,6 +37,4 @@ centros.data
 );*/
 
 mapController.startControl();
-
-//mapController.setMarkers(centros.data);
 
