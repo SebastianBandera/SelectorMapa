@@ -225,12 +225,6 @@ class MapController {
                     centro: c,
                     distance: distance
                 });
-
-                /*const tooltip = c.consejo_id + ": " + c.nombre;
-                const marker = new L.marker([c.Lat_dec,c.Long_dec], {
-                    title: "Centro " + c.nombre,
-                    icon: this._selecionarIcono(c.consejo_id),
-                }).bindTooltip(tooltip, tooltip_params).addTo(this._getMap());*/
             }
         }
 
