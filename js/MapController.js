@@ -315,16 +315,12 @@ class MapController {
     }
 
     _openOverlay(msg) {
-        setTimeout(()=>{
-            if(msg!=null)this._objs.overlay.setMessage(msg);
-            this._objs.overlay.show();
-        },0);
+        if(msg!=null)this._objs.overlay.setMessage(msg);
+        this._objs.overlay.show();
     }
 
     _closeOverlay() {
-        setTimeout(()=>{
-            this._objs.overlay.hide();
-        },0);
+        this._objs.overlay.hide();
     }
 
     _reverseGeodecode() {
