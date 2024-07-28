@@ -216,7 +216,7 @@ div.switch .slider.round:before {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .form_dir {

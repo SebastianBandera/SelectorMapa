@@ -78,6 +78,10 @@ class MapController {
                 this._showCenters(input_toggle.checked);
             });
         }
+
+        try {
+            this._objs.dir_mapa.getObj().parentElement.classList.add("hidden");
+        } catch (error) {}
     }
 
     startControl() {
@@ -331,10 +335,12 @@ class MapController {
             if(data.custom_evaluated_distance>0.5) {
                 console.log("Distancia mayor a 1Km !!! -> " + data.custom_evaluated_distance)
                 this._objs.dir_mapa.setValue("");
-                this._objs.dir_mapa.getObj().classList.add("hidden");
+                this._objs.dir_mapa.getObj().parentElement.classList.add("hidden");
             } else {
-                this._objs.dir_mapa.setValue(this._noNull(data.address.road) + " " + this._noNull(data.address.house_number));
-                this._objs.dir_mapa.getObj().classList.remove("hidden");
+                let text = this._noNull(data.address.road) + " " + this._noNull(data.address.house_number);
+                text = text.trim();
+                this._objs.dir_mapa.setValue(text);
+                this._objs.dir_mapa.getObj().parentElement.classList.remove("hidden");
             }
             
             this._closeOverlay();
