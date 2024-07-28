@@ -403,6 +403,7 @@ class MapController {
                         for (let index = 0; index < promisesObj.length; index++) {
                             const element = promisesObj[index];
                             const dataElementFiltered = this._filterData(element.data, depto);
+                            element["dataElementFiltered"]=dataElementFiltered;
                             element["correct"]=dataElementFiltered.length;
                         }
                         
@@ -420,15 +421,33 @@ class MapController {
                             this._updateCoords();
                         } else {
                             //No encontrado !!!
+                            this._clearMarker();
                         }
                         this._closeOverlay();
                     });
                 } else {
                     //No encontrado !!!
+                    this._clearMarker();
                     this._closeOverlay();
                 }
             }
         }
+    }
+
+    _clearMarker() {
+        this._removeMarker();
+
+        for (const c of this._centers) {
+            this._getMap().removeLayer(c)
+        }
+        if(this._circle) {
+            this._getMap().removeLayer(this._circle);
+        }
+
+        this._objs.coords_lat.setValue("");
+        this._objs.coords_lng.setValue("");
+        this._objs.coords.setValue("");
+        this._objs.status.setValue(this._getStatus());
     }
 
     _isNumber(data) {
@@ -457,7 +476,11 @@ class MapController {
             element["diff"]=Math.abs(element.num-numero);    
         });
         array.sort((c1,c2)=>c1.diff-c2.diff);
-        return array[0].data;
+        if(array.length>0){
+            return array[0].dataElementFiltered;
+        } else {
+            return null;
+        }
     }
 }
 
